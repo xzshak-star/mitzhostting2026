@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Help — Mitz Hosting</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg></div>
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs">Docs</a><a href="/help">Help</a>
+        <a href="/get-started" class="btn-nav">Get Started</a>
+        <a href="/login" class="btn-outline">Login</a>
+      </div>
+    </div>
+  </nav>
+  <div class="docs-page">
+    <h1>Help Center</h1>
+    <p class="lead">Quick answers.</p>
+
+    <h2>Token issues</h2>
+    <p>Tokens only come from our Telegram bot (<code>/start</code>). They are permanent. If you lose it, generate a new one with <code>/token</code> (new free slot).</p>
+
+    <h2>Bot won't start</h2>
+    <ul>
+      <li>Open Manage → Logs for the exact error</li>
+      <li>Make sure a <code>.py</code> entry exists</li>
+      <li>Dependencies: put a <code>requirements.txt</code> — install is manual on free tier for now</li>
+    </ul>
+
+    <h2>Bot limit</h2>
+    <p>Free accounts can host 1 bot. Delete the old one to deploy a new one, or get premium from admin.</p>
+
+    <h2>Banned?</h2>
+    <p>Contact admin. Ban is by hosting token.</p>
+  </div>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Docs — Mitz Hosting</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg></div>
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs">Docs</a><a href="/help">Help</a>
+        <a href="/get-started" class="btn-nav">Get Started</a>
+        <a href="/login" class="btn-outline">Login</a>
+      </div>
+    </div>
+  </nav>
+  <div class="docs-page">
+    <h1>Documentation</h1>
+    <p class="lead">Deploy and manage Python bots on Mitz Hosting.</p>
+
+    <h2>1. Get a Hosting Token</h2>
+    <p>Open our Telegram bot and send <code>/start</code>. You receive a permanent token like <code>MITZ-XXXX-XXXX-XXXX</code>. It cannot be changed or revoked by you. Free tokens = 1 bot slot.</p>
+
+    <h2>2. Create Account</h2>
+    <p>Sign up with username, Gmail, password, confirm password, and paste the hosting token.</p>
+
+    <h2>3. Deploy a Bot</h2>
+    <ol>
+      <li>Dashboard → <strong>+ Deploy Bot</strong></li>
+      <li>Enter name + optional description</li>
+      <li>Upload a <code>.zip</code> of your project</li>
+    </ol>
+    <p>ZIP rules:</p>
+    <ul>
+      <li>Can contain folders and multiple files</li>
+      <li>If exactly one <code>.py</code> file → that becomes the entry point</li>
+      <li>Otherwise we look for <code>main.py</code>, <code>bot.py</code>, <code>app.py</code>, etc.</li>
+    </ul>
+
+    <h2>4. Manage</h2>
+    <p>Click <strong>Manage</strong> on any bot to: start / stop / restart / rename / view logs / delete.</p>
+
+    <h2>Limits</h2>
+    <ul>
+      <li>Free: 1 bot</li>
+      <li>Premium / Admin: set by admin via Telegram</li>
+    </ul>
+  </div>
+</body>
+</html>

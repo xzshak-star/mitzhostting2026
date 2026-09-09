@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — Mitz Hosting</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg></div>
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs">Docs</a>
+        <a href="/help">Help</a>
+        <a href="/login" class="btn-outline">Login</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="auth-page">
+    <div class="auth-card">
+      <h1>Create Account</h1>
+      <p class="subtitle">Token required — get it from our Telegram bot.</p>
+      <div class="token-hint">Open the Telegram bot → /start → copy your MITZ-XXXX-XXXX-XXXX token. It is permanent and cannot be changed.</div>
+
+      <form id="signupForm">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="your_username" required autocomplete="username" />
+        </div>
+        <div class="form-group">
+          <label for="email">Gmail / Email</label>
+          <input type="email" id="email" placeholder="you@gmail.com" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="••••••••" required autocomplete="new-password" />
+        </div>
+        <div class="form-group">
+          <label for="confirm">Confirm Password</label>
+          <input type="password" id="confirm" placeholder="••••••••" required autocomplete="new-password" />
+        </div>
+        <div class="form-group">
+          <label for="token">Hosting Token</label>
+          <input type="text" id="token" placeholder="MITZ-XXXX-XXXX-XXXX" required autocomplete="off" />
+        </div>
+        <p id="formError" class="form-error"></p>
+        <button type="submit" class="btn-primary btn-full">Create Account</button>
+      </form>
+      <p class="auth-footer">Already have an account? <a href="/login">Sign in</a></p>
+    </div>
+  </div>
+  <script src="/js/main.js"></script>
+</body>
+</html>

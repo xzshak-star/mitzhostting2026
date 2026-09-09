@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Mitz Hosting</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg></div>
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs">Docs</a>
+        <a href="/help">Help</a>
+        <a href="/admin" id="adminLink" style="display:none">Admin</a>
+        <a href="#" onclick="logout();return false" class="btn-outline">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <div>
+        <h1>Hey, <span id="welcomeUser">...</span></h1>
+        <p style="color:var(--text-muted);margin-top:4px;font-size:0.9rem">
+          Plan: <strong id="planLabel">free</strong> · Bots: <span id="botCount">0</span>/<span id="maxBots">1</span>
+        </p>
+      </div>
+      <button class="btn-primary" onclick="openDeployModal()">+ Deploy Bot</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="label">Active</div><div class="value" id="statActive">0</div></div>
+      <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="statTotal">0</div></div>
+      <div class="stat-card"><div class="label">Plan</div><div class="value" id="statPlan" style="font-size:1.15rem">Free</div></div>
+      <div class="stat-card"><div class="label">Slots Left</div><div class="value" id="statSlots">1</div></div>
+    </div>
+
+    <div class="bots-panel">
+      <div class="bots-panel-header"><h2>Your Bots</h2></div>
+      <div id="botsList">
+        <div class="empty-state"><h3>No bots yet</h3><p>Deploy your first bot to see it here.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deploy Modal -->
+  <div class="modal-overlay" id="deployModal">
+    <div class="modal">
+      <h2>Deploy Bot</h2>
+      <form id="deployForm">
+        <div class="form-group">
+          <label>Bot Name *</label>
+          <input type="text" id="deployName" placeholder="my-telegram-bot" required />
+        </div>
+        <div class="form-group">
+          <label>Description (optional)</label>
+          <input type="text" id="deployDesc" placeholder="What this bot does" />
+        </div>
+        <div class="form-group">
+          <label>ZIP File *</label>
+          <input type="file" id="deployFile" accept=".zip" required />
+          <p style="font-size:0.8rem;color:var(--text-muted);margin-top:6px">
+            ZIP can contain folders. If only one .py exists it becomes the entry point. Otherwise we look for main.py / bot.py.
+          </p>
+        </div>
+        <p id="deployError" class="form-error"></p>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeDeployModal()">Cancel</button>
+          <button type="submit" class="btn-primary">Deploy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manage Modal -->
+  <div class="modal-overlay" id="manageModal">
+    <div class="modal">
+      <h2 id="manageTitle">Manage Bot</h2>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="manageName" />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" id="manageDesc" />
+      </div>
+      <div class="form-group">
+        <label>Logs</label>
+        <div class="logs-box" id="manageLogs">Loading...</div>
+      </div>
+      <p id="manageError" class="form-error"></p>
+      <div class="modal-actions" style="flex-wrap:wrap">
+        <button class="btn-sm success" onclick="botAction('start')">Start</button>
+        <button class="btn-sm" onclick="botAction('stop')">Stop</button>
+        <button class="btn-sm" onclick="botAction('restart')">Restart</button>
+        <button class="btn-sm" onclick="saveManage()">Save Name</button>
+        <button class="btn-sm danger" onclick="botAction('delete')">Delete</button>
+        <button class="btn-secondary" onclick="closeManageModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script>
+    let currentUser = null;
+    let manageBotId = null;
+
+    async function loadMe() {
+      try {
+        const data = await api('/api/auth/me');
+        currentUser = data.user;
+        document.getElementById('welcomeUser').textContent = data.user.username;
+        document.getElementById('planLabel').textContent = data.user.plan;
+        document.getElementById('botCount').textContent = data.user.botCount;
+        document.getElementById('maxBots').textContent = data.user.maxBots;
+        document.getElementById('statPlan').textContent = data.user.plan;
+        document.getElementById('statSlots').textContent = Math.max(0, data.user.maxBots - data.user.botCount);
+        if (data.user.plan === 'admin') document.getElementById('adminLink').style.display = '';
+        loadBots();
+      } catch (e) {
+        window.location.href = '/login';
+      }
+    }
+
+    async function loadBots() {
+      const data = await api('/api/bots');
+      const list = document.getElementById('botsList');
+      const bots = data.bots || [];
+      document.getElementById('statTotal').textContent = bots.length;
+      document.getElementById('statActive').textContent = bots.filter(b => b.status === 'running').length;
+      document.getElementById('botCount').textContent = bots.length;
+
+      if (!bots.length) {
+        list.innerHTML = '<div class="empty-state"><h3>No bots yet</h3><p>Deploy your first bot to see it here.</p></div>';
+        return;
+      }
+      list.innerHTML = bots.map(b => `
+        <div class="bot-row">
+          <div>
+            <div class="bot-name">${esc(b.name)}</div>
+            <div class="bot-desc">${esc(b.description || b.entryPoint || '')}</div>
+          </div>
+          <div><span class="status-badge ${b.status}">${b.status}</span></div>
+          <div style="font-size:0.82rem;color:var(--text-muted)">${b.entryPoint || '—'}</div>
+          <div style="font-size:0.82rem;color:var(--text-muted)">${b.startedAt ? new Date(b.startedAt).toLocaleString() : '—'}</div>
+          <div class="bot-actions">
+            <button class="btn-sm" onclick="openManage('${b.id}')">Manage</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function esc(s) {
+      const d = document.createElement('div');
+      d.textContent = s || '';
+      return d.innerHTML;
+    }
+
+    function openDeployModal() {
+      document.getElementById('deployError').classList.remove('show');
+      document.getElementById('deployForm').reset();
+      document.getElementById('deployModal').classList.add('active');
+    }
+    function closeDeployModal() {
+      document.getElementById('deployModal').classList.remove('active');
+    }
+
+    document.getElementById('deployForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('deployName').value.trim();
+      const description = document.getElementById('deployDesc').value.trim();
+      const file = document.getElementById('deployFile').files[0];
+      if (!file) return showError('deployError', 'ZIP required');
+      const fd = new FormData();
+      fd.append('name', name);
+      fd.append('description', description);
+      fd.append('file', file);
+      try {
+        const res = await fetch('/api/bots/deploy', { method: 'POST', body: fd, credentials: 'same-origin' });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'Deploy failed');
+        closeDeployModal();
+        loadMe();
+      } catch (err) {
+        showError('deployError', err.message);
+      }
+    });
+
+    async function openManage(id) {
+      manageBotId = id;
+      const data = await api('/api/bots');
+      const bot = (data.bots || []).find(b => b.id === id);
+      if (!bot) return;
+      document.getElementById('manageTitle').textContent = 'Manage · ' + bot.name;
+      document.getElementById('manageName').value = bot.name;
+      document.getElementById('manageDesc').value = bot.description || '';
+      document.getElementById('manageError').classList.remove('show');
+      document.getElementById('manageModal').classList.add('active');
+      const logs = await api('/api/bots/' + id + '/logs');
+      document.getElementById('manageLogs').textContent = logs.logs || '(no logs yet)';
+    }
+    function closeManageModal() {
+      document.getElementById('manageModal').classList.remove('active');
+      manageBotId = null;
+    }
+
+    async function botAction(action) {
+      if (!manageBotId) return;
+      try {
+        if (action === 'delete') {
+          if (!confirm('Delete this bot permanently?')) return;
+          await api('/api/bots/' + manageBotId, { method: 'DELETE' });
+          closeManageModal();
+        } else {
+          await api('/api/bots/' + manageBotId + '/' + action, { method: 'POST' });
+        }
+        loadBots();
+        if (action !== 'delete') {
+          const logs = await api('/api/bots/' + manageBotId + '/logs');
+          document.getElementById('manageLogs').textContent = logs.logs || '(no logs)';
+        }
+      } catch (err) {
+        showError('manageError', err.message);
+      }
+    }
+
+    async function saveManage() {
+      if (!manageBotId) return;
+      try {
+        await api('/api/bots/' + manageBotId, {
+          method: 'PUT',
+          body: JSON.stringify({
+            name: document.getElementById('manageName').value,
+            description: document.getElementById('manageDesc').value
+          })
+        });
+        loadBots();
+      } catch (err) {
+        showError('manageError', err.message);
+      }
+    }
+
+    loadMe();
+    setInterval(loadBots, 15000);
+  </script>
+</body>
+</html>

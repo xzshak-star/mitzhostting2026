@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — Mitz Hosting</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-mark"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg></div>
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="#" onclick="logout();return false" class="btn-outline">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <div class="dashboard-header">
+      <h1>Admin Panel</h1>
+    </div>
+
+    <div class="stats-grid" id="adminStats">
+      <div class="stat-card"><div class="label">Users</div><div class="value" id="aUsers">—</div></div>
+      <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="aBots">—</div></div>
+      <div class="stat-card"><div class="label">Active</div><div class="value" id="aActive">—</div></div>
+      <div class="stat-card"><div class="label">Premium</div><div class="value" id="aPremium">—</div></div>
+    </div>
+
+    <div class="admin-grid">
+      <div class="admin-card">
+        <h3>Ban / Unban Token</h3>
+        <div class="form-group"><input type="text" id="banToken" placeholder="MITZ-XXXX-XXXX-XXXX" /></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm danger" onclick="doBan()">Ban</button>
+          <button class="btn-sm success" onclick="doUnban()">Unban</button>
+        </div>
+      </div>
+      <div class="admin-card">
+        <h3>Upgrade Token</h3>
+        <div class="form-group"><input type="text" id="upToken" placeholder="MITZ-XXXX-XXXX-XXXX" /></div>
+        <div class="form-group"><input type="number" id="upMax" placeholder="Max bots (default 10)" /></div>
+        <div style="display:flex;gap:8px">
+          <button class="btn-sm" onclick="doPremium()">Premium</button>
+          <button class="btn-sm" onclick="doAdmin()">Admin ∞</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bots-panel" style="margin-top:20px">
+      <div class="bots-panel-header"><h2>Users</h2></div>
+      <div id="usersList" style="padding:12px 18px;font-size:0.88rem;color:var(--text-muted)">Loading...</div>
+    </div>
+  </div>
+
+  <script src="/js/main.js"></script>
+  <script>
+    async function loadAdmin() {
+      try {
+        const me = await api('/api/auth/me');
+        if (me.user.plan !== 'admin') { alert('Admin only'); location.href = '/dashboard'; return; }
+        const s = await api('/api/admin/stats');
+        document.getElementById('aUsers').textContent = s.stats.users;
+        document.getElementById('aBots').textContent = s.stats.totalBots;
+        document.getElementById('aActive').textContent = s.stats.activeBots;
+        document.getElementById('aPremium').textContent = s.stats.premium;
+        const u = await api('/api/admin/users');
+        document.getElementById('usersList').innerHTML = (u.users || []).map(x =>
+          `<div style="padding:8px 0;border-bottom:1px solid var(--border)">
+            <strong style="color:var(--text)">${x.username}</strong> · ${x.email}<br>
+            Token: <code>${x.token}</code> · ${x.plan} · bots ${x.botCount}/${x.maxBots} ${x.banned ? '🚫' : ''}
+          </div>`
+        ).join('') || 'No users';
+      } catch (e) {
+        location.href = '/login';
+      }
+    }
+    async function doBan() {
+      await api('/api/admin/ban', { method: 'POST', body: JSON.stringify({ token: document.getElementById('banToken').value.trim() }) });
+      alert('Banned'); loadAdmin();
+    }
+    async function doUnban() {
+      await api('/api/admin/unban', { method: 'POST', body: JSON.stringify({ token: document.getElementById('banToken').value.trim() }) });
+      alert('Unbanned'); loadAdmin();
+    }
+    async function doPremium() {
+      await api('/api/admin/premium', { method: 'POST', body: JSON.stringify({
+        token: document.getElementById('upToken').value.trim(),
+        maxBots: document.getElementById('upMax').value || 10
+      }) });
+      alert('Success! Premium applied.'); loadAdmin();
+    }
+    async function doAdmin() {
+      await api('/api/admin/admin', { method: 'POST', body: JSON.stringify({ token: document.getElementById('upToken').value.trim() }) });
+      alert('Success! Admin / unlimited applied.'); loadAdmin();
+    }
+    loadAdmin();
+  </script>
+</body>
+</html>
