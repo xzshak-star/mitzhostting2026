@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mitz Hosting — Host Your Bots</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>
+        </div>
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs">Docs</a>
+        <a href="/help">Help</a>
+        <a href="/get-started" class="btn-nav">Get Started</a>
+        <a href="/login" class="btn-outline">Login</a>
+      </div>
+      <button class="mobile-toggle" id="mobileToggle"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="/docs">Docs</a><a href="/help">Help</a><a href="/get-started">Get Started</a><a href="/login">Login</a>
+  </div>
+
+  <header class="hero">
+    <div class="hero-content">
+      <div class="badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg>
+        Bot Hosting Platform
+      </div>
+      <h1>Host your bots.<br><span class="gradient-text">Own your panel.</span></h1>
+      <p class="hero-sub">Deploy Python bots in seconds. Clean dashboard, auto-restart, live logs. Free plan included.</p>
+      <div class="hero-actions">
+        <a href="/signup" class="btn-primary">Create Account</a>
+        <a href="/docs" class="btn-secondary">Read Docs</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="terminal-card">
+        <div class="terminal-header">
+          <span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span>
+          <span class="terminal-title">mitz-hosting</span>
+        </div>
+        <div class="terminal-body">
+          <p><span class="prompt">$</span> mitz deploy bot.zip</p>
+          <p class="success">✓ Extracted · detected main.py</p>
+          <p class="success">✓ Bot online</p>
+          <p><span class="prompt">$</span> mitz status</p>
+          <p>Status: <span class="online">RUNNING</span> · Uptime 99.9%</p>
+          <p><span class="prompt">$</span> <span class="cursor">_</span></p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section class="features">
+    <div class="section-header">
+      <h2>Built for bot creators</h2>
+      <p>Simple tools. Real control.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M13 3L4 14h7l-1 7 9-11h-7l1-7z"/></svg></div>
+        <h3>One-Click Deploy</h3>
+        <p>Upload a ZIP. We auto-detect your main .py and run it.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div>
+        <h3>Live Dashboard</h3>
+        <p>Start, stop, rename, delete, and stream logs from one place.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Token Gated</h3>
+        <p>Hosting tokens from our Telegram bot. Permanent. No abuse.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Always On</h3>
+        <p>Auto-restart on crash. Your bots stay online 24/7.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/><path d="M10 9H8"/></svg></div>
+        <h3>Real-time Logs</h3>
+        <p>Watch stdout/stderr live. Debug the second something breaks.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <h3>Python Ready</h3>
+        <p>Any folder structure. We find main.py / bot.py automatically.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <div class="cta-box">
+      <h2>Ready to host your first bot?</h2>
+      <p>Get a token from Telegram, create an account, deploy in minutes.</p>
+      <a href="/signup" class="btn-primary">Get Started Free</a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="logo-text">Mitz<span class="accent">Hosting</span></span>
+        <p>Built for bot creators who want control.</p>
+      </div>
+      <div class="footer-links">
+        <div><h4>Product</h4><a href="/docs">Docs</a><a href="/help">Help</a><a href="/get-started">Get Started</a></div>
+        <div><h4>Account</h4><a href="/signup">Sign Up</a><a href="/login">Login</a></div>
+      </div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 Mitz Hosting</p></div>
+  </footer>
+  <script src="/js/main.js"></script>
+</body>
+</html>
