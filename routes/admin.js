@@ -20,8 +20,11 @@ router.get('/stats', (req, res) => {
 router.get('/users', (req, res) => {
   const db = readDB();
   const users = db.users.map(u => ({
-    id: u.id, username: u.username, email: u.email, token: u.token,
-    banned: u.banned, createdAt: u.createdAt,
+    id: u.id,
+    telegramId: u.telegramId,
+    token: u.token,
+    banned: u.banned,
+    createdAt: u.createdAt,
     plan: (db.tokens[u.token] || {}).type || 'free',
     maxBots: (db.tokens[u.token] || {}).maxBots || 1,
     botCount: db.bots.filter(b => b.userId === u.id && b.status !== 'deleted').length
