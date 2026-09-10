@@ -6,6 +6,25 @@
   <title>Dashboard — Mitz Hosting</title>
   <link rel="stylesheet" href="/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    .dash-grid { display:grid; grid-template-columns: 1fr 320px; gap:24px; }
+    @media(max-width:960px){ .dash-grid{ grid-template-columns:1fr; } }
+    .side-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-bottom:16px; }
+    .side-card h3 { font-size:0.95rem; margin-bottom:12px; }
+    .token-box { font-family:var(--mono); font-size:0.78rem; background:var(--bg); border:1px solid var(--border); padding:10px 12px; border-radius:8px; word-break:break-all; color:var(--cyan); }
+    .bot-card { background:var(--bg-card); border:1px solid var(--border); border-radius:var(--radius); padding:18px 20px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; gap:16px; transition:border-color .2s; }
+    .bot-card:hover { border-color:var(--accent); }
+    .bot-card .left { flex:1; min-width:0; }
+    .bot-card .name { font-weight:600; font-size:1.05rem; }
+    .bot-card .meta { font-size:0.82rem; color:var(--text-muted); margin-top:4px; }
+    .bot-card .actions { display:flex; gap:8px; flex-shrink:0; }
+    .pulse { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--success); margin-right:6px; animation:pulse 1.5s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .plan-pill { display:inline-block; padding:3px 10px; border-radius:20px; font-size:0.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.04em; }
+    .plan-pill.free { background:rgba(152,152,176,.15); color:var(--text-muted); }
+    .plan-pill.premium { background:rgba(167,139,250,.2); color:var(--accent); }
+    .plan-pill.admin { background:rgba(34,211,238,.15); color:var(--cyan); }
+  </style>
 </head>
 <body>
   <nav class="navbar">
@@ -27,24 +46,46 @@
     <div class="dashboard-header">
       <div>
         <h1>Hey, <span id="welcomeUser">...</span></h1>
-        <p style="color:var(--text-muted);margin-top:4px;font-size:0.9rem">
-          Plan: <strong id="planLabel">free</strong> · Bots: <span id="botCount">0</span>/<span id="maxBots">1</span>
+        <p style="color:var(--text-muted);margin-top:6px;font-size:0.9rem">
+          <span class="plan-pill free" id="planPill">free</span>
+          &nbsp;·&nbsp; Bots <span id="botCount">0</span>/<span id="maxBots">1</span>
         </p>
       </div>
       <button class="btn-primary" onclick="openDeployModal()">+ Deploy Bot</button>
     </div>
 
     <div class="stats-grid">
-      <div class="stat-card"><div class="label">Active</div><div class="value" id="statActive">0</div></div>
+      <div class="stat-card"><div class="label">Active Now</div><div class="value" id="statActive">0</div></div>
       <div class="stat-card"><div class="label">Total Bots</div><div class="value" id="statTotal">0</div></div>
       <div class="stat-card"><div class="label">Plan</div><div class="value" id="statPlan" style="font-size:1.15rem">Free</div></div>
       <div class="stat-card"><div class="label">Slots Left</div><div class="value" id="statSlots">1</div></div>
     </div>
 
-    <div class="bots-panel">
-      <div class="bots-panel-header"><h2>Your Bots</h2></div>
-      <div id="botsList">
-        <div class="empty-state"><h3>No bots yet</h3><p>Deploy your first bot to see it here.</p></div>
+    <div class="dash-grid">
+      <div>
+        <div class="bots-panel">
+          <div class="bots-panel-header"><h2>Your Bots</h2></div>
+          <div id="botsList">
+            <div class="empty-state"><h3>No bots yet</h3><p>Deploy your first bot to see it here.</p></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="side-card">
+          <h3>Your Token</h3>
+          <div class="token-box" id="tokenBox">—</div>
+          <p style="font-size:0.78rem;color:var(--text-muted);margin-top:10px">Permanent. Never changes.</p>
+        </div>
+        <div class="side-card">
+          <h3>Quick Tips</h3>
+          <ul style="padding-left:18px;color:var(--text-muted);font-size:0.88rem;line-height:1.7">
+            <li>ZIP must contain at least one .py</li>
+            <li>main.py / bot.py preferred</li>
+            <li>Free plan = 1 bot only</li>
+            <li>Delete old bot to free the slot</li>
+            <li>Admin gets notified on every deploy</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -64,15 +105,15 @@
         </div>
         <div class="form-group">
           <label>ZIP File *</label>
-          <input type="file" id="deployFile" accept=".zip" required />
+          <input type="file" id="deployFile" accept=".zip,application/zip" required />
           <p style="font-size:0.8rem;color:var(--text-muted);margin-top:6px">
-            ZIP can contain folders. If only one .py exists it becomes the entry point. Otherwise we look for main.py / bot.py.
+            ZIP can contain folders. Single .py = auto entry. Else looks for main.py / bot.py.
           </p>
         </div>
         <p id="deployError" class="form-error"></p>
         <div class="modal-actions">
           <button type="button" class="btn-secondary" onclick="closeDeployModal()">Cancel</button>
-          <button type="submit" class="btn-primary">Deploy</button>
+          <button type="submit" class="btn-primary" id="deployBtn">Deploy</button>
         </div>
       </form>
     </div>
@@ -91,7 +132,7 @@
         <input type="text" id="manageDesc" />
       </div>
       <div class="form-group">
-        <label>Logs</label>
+        <label>Logs (live)</label>
         <div class="logs-box" id="manageLogs">Loading...</div>
       </div>
       <p id="manageError" class="form-error"></p>
@@ -99,7 +140,7 @@
         <button class="btn-sm success" onclick="botAction('start')">Start</button>
         <button class="btn-sm" onclick="botAction('stop')">Stop</button>
         <button class="btn-sm" onclick="botAction('restart')">Restart</button>
-        <button class="btn-sm" onclick="saveManage()">Save Name</button>
+        <button class="btn-sm" onclick="saveManage()">Save</button>
         <button class="btn-sm danger" onclick="botAction('delete')">Delete</button>
         <button class="btn-secondary" onclick="closeManageModal()">Close</button>
       </div>
@@ -115,12 +156,17 @@
       try {
         const data = await api('/api/auth/me');
         currentUser = data.user;
-        document.getElementById('welcomeUser').textContent = data.user.username;
-        document.getElementById('planLabel').textContent = data.user.plan;
+        document.getElementById('welcomeUser').textContent = data.user.telegramId;
         document.getElementById('botCount').textContent = data.user.botCount;
         document.getElementById('maxBots').textContent = data.user.maxBots;
         document.getElementById('statPlan').textContent = data.user.plan;
         document.getElementById('statSlots').textContent = Math.max(0, data.user.maxBots - data.user.botCount);
+        document.getElementById('tokenBox').textContent = data.user.token;
+
+        const pill = document.getElementById('planPill');
+        pill.textContent = data.user.plan;
+        pill.className = 'plan-pill ' + (data.user.plan || 'free');
+
         if (data.user.plan === 'admin') document.getElementById('adminLink').style.display = '';
         loadBots();
       } catch (e) {
@@ -129,31 +175,32 @@
     }
 
     async function loadBots() {
-      const data = await api('/api/bots');
-      const list = document.getElementById('botsList');
-      const bots = data.bots || [];
-      document.getElementById('statTotal').textContent = bots.length;
-      document.getElementById('statActive').textContent = bots.filter(b => b.status === 'running').length;
-      document.getElementById('botCount').textContent = bots.length;
+      try {
+        const data = await api('/api/bots');
+        const list = document.getElementById('botsList');
+        const bots = data.bots || [];
+        document.getElementById('statTotal').textContent = bots.length;
+        document.getElementById('statActive').textContent = bots.filter(b => b.status === 'running').length;
+        document.getElementById('botCount').textContent = bots.length;
 
-      if (!bots.length) {
-        list.innerHTML = '<div class="empty-state"><h3>No bots yet</h3><p>Deploy your first bot to see it here.</p></div>';
-        return;
+        if (!bots.length) {
+          list.innerHTML = '<div class="empty-state"><h3>No bots yet</h3><p>Deploy your first bot to see it here.</p></div>';
+          return;
+        }
+        list.innerHTML = bots.map(b => `
+          <div class="bot-card">
+            <div class="left">
+              <div class="name">${b.status === 'running' ? '<span class="pulse"></span>' : ''}${esc(b.name)}</div>
+              <div class="meta">${esc(b.description || b.entryPoint || '—')} · <span class="status-badge ${b.status}">${b.status}</span></div>
+            </div>
+            <div class="actions">
+              <button class="btn-sm" onclick="openManage('${b.id}')">Manage</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (e) {
+        if (e.message && e.message.includes('logged')) window.location.href = '/login';
       }
-      list.innerHTML = bots.map(b => `
-        <div class="bot-row">
-          <div>
-            <div class="bot-name">${esc(b.name)}</div>
-            <div class="bot-desc">${esc(b.description || b.entryPoint || '')}</div>
-          </div>
-          <div><span class="status-badge ${b.status}">${b.status}</span></div>
-          <div style="font-size:0.82rem;color:var(--text-muted)">${b.entryPoint || '—'}</div>
-          <div style="font-size:0.82rem;color:var(--text-muted)">${b.startedAt ? new Date(b.startedAt).toLocaleString() : '—'}</div>
-          <div class="bot-actions">
-            <button class="btn-sm" onclick="openManage('${b.id}')">Manage</button>
-          </div>
-        </div>
-      `).join('');
     }
 
     function esc(s) {
@@ -165,6 +212,8 @@
     function openDeployModal() {
       document.getElementById('deployError').classList.remove('show');
       document.getElementById('deployForm').reset();
+      document.getElementById('deployBtn').disabled = false;
+      document.getElementById('deployBtn').textContent = 'Deploy';
       document.getElementById('deployModal').classList.add('active');
     }
     function closeDeployModal() {
@@ -177,6 +226,9 @@
       const description = document.getElementById('deployDesc').value.trim();
       const file = document.getElementById('deployFile').files[0];
       if (!file) return showError('deployError', 'ZIP required');
+      const btn = document.getElementById('deployBtn');
+      btn.disabled = true;
+      btn.textContent = 'Deploying...';
       const fd = new FormData();
       fd.append('name', name);
       fd.append('description', description);
@@ -186,9 +238,11 @@
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || 'Deploy failed');
         closeDeployModal();
-        loadMe();
+        setTimeout(loadMe, 400);
       } catch (err) {
         showError('deployError', err.message);
+        btn.disabled = false;
+        btn.textContent = 'Deploy';
       }
     });
 
@@ -214,7 +268,7 @@
       if (!manageBotId) return;
       try {
         if (action === 'delete') {
-          if (!confirm('Delete this bot permanently?')) return;
+          if (!confirm('Delete this bot permanently? This frees your slot.')) return;
           await api('/api/bots/' + manageBotId, { method: 'DELETE' });
           closeManageModal();
         } else {
@@ -235,10 +289,10 @@
       try {
         await api('/api/bots/' + manageBotId, {
           method: 'PUT',
-          body: JSON.stringify({
+          body: {
             name: document.getElementById('manageName').value,
             description: document.getElementById('manageDesc').value
-          })
+          }
         });
         loadBots();
       } catch (err) {
@@ -247,7 +301,7 @@
     }
 
     loadMe();
-    setInterval(loadBots, 15000);
+    setInterval(loadBots, 12000);
   </script>
 </body>
 </html>

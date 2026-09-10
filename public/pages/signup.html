@@ -25,17 +25,17 @@
   <div class="auth-page">
     <div class="auth-card">
       <h1>Create Account</h1>
-      <p class="subtitle">Token required — get it from our Telegram bot.</p>
-      <div class="token-hint">Open the Telegram bot → /start → copy your MITZ-XXXX-XXXX-XXXX token. It is permanent and cannot be changed.</div>
+      <p class="subtitle">Telegram ID + Password + Token only.</p>
+      <div class="token-hint">
+        1. Open our Telegram bot → send <b>/start</b><br>
+        2. Copy your permanent MITZ token<br>
+        3. Your Telegram ID is visible in the bot or @userinfobot
+      </div>
 
       <form id="signupForm">
         <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" placeholder="your_username" required autocomplete="username" />
-        </div>
-        <div class="form-group">
-          <label for="email">Gmail / Email</label>
-          <input type="email" id="email" placeholder="you@gmail.com" required autocomplete="email" />
+          <label for="telegramId">Telegram User ID</label>
+          <input type="text" id="telegramId" placeholder="8632939616" required inputmode="numeric" autocomplete="off" />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
