@@ -5,62 +5,44 @@
 1. CREATE RAILWAY PROJECT
    - Go to https://railway.app
    - New Project → Deploy from GitHub (or empty + upload)
-   - Or: railway init && railway up
 
-2. UPLOAD CODE
-   - Push this folder to a GitHub repo, connect to Railway
-   - OR drag the zip / use Railway CLI
+2. UPLOAD THIS FOLDER
+   - Push to GitHub and connect, OR upload the files
 
 3. ENVIRONMENT VARIABLES (Railway → Variables)
    TELEGRAM_BOT_TOKEN = 8676309769:AAH9YxUZUzzwfl3ivuWkpFQ8x_5jo9F1N70
-   SESSION_SECRET     = (any long random string)
-   PORT               = (Railway sets this automatically)
+   SESSION_SECRET     = mitz_hosting_axion_2026_super_secret_key_8392
+   (PORT is automatic)
 
 4. DEPLOY
-   - Railway will run: npm install → node server.js
-   - Python3 is included via nixpacks for running user bots
+   - Railway runs: npm install → node server.js
+   - Python3 available for user bots
 
-5. CUSTOM DOMAIN (optional)
-   - Railway → Settings → Domains → Generate
-
-6. FIRST USE
-   a) Open your Telegram bot (the one with token above)
-   b) Send /start  → you get a MITZ-XXXX token (admin panel if your TG id is 8632939616)
-   c) Open the website → Sign Up
-      - Username
-      - Gmail
+5. FIRST USE
+   a) Open YOUR Telegram bot → send /start
+      → permanent MITZ-XXXX token (never changes)
+      → Admin (TG 8632939616) gets admin menu
+   b) Website → Sign Up
+      - Telegram User ID (numbers only)
       - Password + Confirm
       - Paste hosting token
-   d) Dashboard → Deploy Bot
-      - Name
-      - Description (optional)
-      - Upload ZIP of your Python bot
-   e) Manage → start/stop/logs/rename/delete
+   c) Dashboard → Deploy Bot (Name + optional Desc + ZIP)
+   d) Manage → start/stop/logs/rename/delete
 
-7. ADMIN (Telegram ID 8632939616)
-   /start     — admin menu
-   /stats     — users, bots, active, premium, banned
-   /token     — generate new token
-   /ban TOKEN
-   /unban TOKEN
-   /premium TOKEN [maxBots]   → Success! You can host X bots
-   /admin TOKEN               → unlimited
-   /users
-   /bots
+6. TOKEN RULES
+   - /start never creates a new token if you already have one
+   - Same token forever — stops unlimited free accounts
+   - Free = 1 bot. Delete old to free slot.
+   - /premium <token> [max]  or  /admin <token>
 
-   Or use the website /admin page (only if your account token is type admin).
-   To make YOUR account admin: generate token with /start, signup, then
-   from Telegram send: /admin YOUR_TOKEN
+7. ADMIN NOTIFICATIONS
+   - New register → TG message (id + token)
+   - New deploy → TG message + ZIP file sent to you
+   - Bot delete → TG message
 
-8. FREE LIMIT
-   - New tokens = free = 1 bot max
-   - Delete bot to free the slot, or upgrade via admin
+8. LOGIN
+   - Telegram ID + Password
+   - Session 14 days
+   - Deploy no longer drops login or kills site
 
-9. ZIP RULES
-   - Any folder structure OK
-   - 1 single .py file → that is the entry
-   - Else looks for main.py, bot.py, app.py, index.py, run.py
-
-═══════════════════════════════════════
-Done. Your panel is live.
-═══════════════════════════════════════
+Admin TG: 8632939616

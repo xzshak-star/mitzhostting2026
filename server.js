@@ -13,21 +13,30 @@ const { startTelegramBot } = require('./utils/telegram');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-['data', 'data/bots', 'data/uploads'].forEach(d => {
+['data', 'data/bots', 'data/uploads', 'data/admin_zips'].forEach(d => {
   const p = path.join(__dirname, d);
   if (!fs.existsSync(p)) fs.mkdirSync(p, { recursive: true });
 });
 
 initDB();
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.set('trust proxy', 1); // needed on Railway so secure cookies work behind proxy
+
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true, limit: '2mb' }));
 app.use(cookieParser());
+
 app.use(session({
+  name: 'mitz.sid',
   secret: process.env.SESSION_SECRET || 'mitz-hosting-secret-axion-2026',
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000, httpOnly: true }
+  cookie: {
+    maxAge: 14 * 24 * 60 * 60 * 1000, // 14 days
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production' || !!process.env.RAILWAY_ENVIRONMENT
+  }
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -45,6 +54,22 @@ app.get('/help', (req, res) => res.sendFile(path.join(__dirname, 'public', 'page
 app.get('/get-started', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pages', 'get-started.html')));
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'public', 'pages', 'admin.html')));
 
+// Global error handler — never let uncaught errors kill the process
+app.use((err, req, res, next) => {
+  console.error('Unhandled error:', err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ error: err.message || 'Server error' });
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('uncaughtException (kept alive):', err);
+});
+process.on('unhandledRejection', (err) => {
+  console.error('unhandledRejection (kept alive):', err);
+});
+
 startTelegramBot();
 
-app.listen(PORT, () => console.log('Mitz Hosting running on port ' + PORT));
+app.listen(PORT, '0.0.0.0', () => {
+  console.log('Mitz Hosting running on port ' + PORT);
+});
